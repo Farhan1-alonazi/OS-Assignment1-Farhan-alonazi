@@ -29,6 +29,9 @@ class Process implements Runnable {
     private int burstTime; // Total time the process requires to complete (in milliseconds)
     private int timeQuantum; // Time slice (time quantum) allowed per CPU access (in milliseconds)
     private int remainingTime; // Time left for the process to finish its execution
+    // Feature 3: Waiting time tracking
+    private long readyQueueEntryTime;
+    private long waitingTime;
     private int priority; // Feature 1: Add a random process priority from 1 to 10 for display only.
 
     // Constructor to initialize the process with name, burst time, and time quantum
@@ -37,6 +40,8 @@ class Process implements Runnable {
         this.burstTime = burstTime;
         this.timeQuantum = timeQuantum;
         this.remainingTime = burstTime; // Initially, remaining time is equal to the burst time
+        readyQueueEntryTime = System.currentTimeMillis();
+        waitingTime = 0;
         this.priority = 1; // Feature 1: Initialize priority before assigning the random value.
 
     }
@@ -154,6 +159,27 @@ class Process implements Runnable {
     public boolean isFinished() {
         return remainingTime <= 0;
     }
+
+    // Feature 3: Mark the time when the process enters or re-enters the ready
+    // queue.
+    public void markReady() {
+        readyQueueEntryTime = System.currentTimeMillis();
+    }
+
+    // Feature 3: Add the time this process waited before starting this quantum.
+    public void updateWaitingTime() {
+        waitingTime += System.currentTimeMillis() - readyQueueEntryTime;
+    }
+
+    // Feature 3: Return the total waiting time accumulated by the process.
+    public long getWaitingTime() {
+        return waitingTime;
+    }
+
+    // Feature 3: Calculate turnaround time as waiting time plus burst time.
+    public long getTurnaroundTime() {
+        return waitingTime + burstTime;
+    }
 }
 
 public class SchedulerSimulation {
@@ -270,6 +296,9 @@ public class SchedulerSimulation {
             // Retrieve the process associated with the thread from the map
             Process process = processMap.get(currentThread);
 
+            // Feature 3: Add the time this process waited before starting this quantum.
+            process.updateWaitingTime();
+
             // Check if the process is not finished
             if (!process.isFinished()) {
                 // If the process still has remaining time, check if there are more processes in
@@ -298,6 +327,18 @@ public class SchedulerSimulation {
         System.out.println(Colors.BOLD + Colors.BRIGHT_GREEN +
                 "╚════════════════════════════════════════════════════════════════════════════════╝" +
                 Colors.RESET + "\n");
+        // Feature 3: Waiting time and turnaround time summary
+        System.out.println("\n=== Process Summary ===");
+        System.out.printf("%-10s %-12s %-15s %-15s%n",
+                "Process", "Burst Time", "Waiting Time", "Turnaround Time");
+
+        for (Process process : processMap.values()) {
+            System.out.printf("%-10s %-12d %-15d %-15d%n",
+                    process.getName(),
+                    process.getBurstTime(),
+                    process.getWaitingTime(),
+                    process.getTurnaroundTime());
+        }
     }
 
     // Method to add a process to the queue and map, while printing a "ready"
@@ -306,9 +347,13 @@ public class SchedulerSimulation {
             Map<Thread, Process> processMap) {
         // Create a new thread to run the process
         Thread thread = new Thread(process);
+        // Feature 3: Record when process enters the ready queue
+        process.markReady();
 
         // Add the thread to the ready queue
         processQueue.add(thread);
+        // Feature 3: Record the moment the process enters the ready queue.
+        process.markReady();
 
         // Map the thread to the process, so we can track the process associated with
         // each thread
@@ -322,5 +367,7 @@ public class SchedulerSimulation {
                 Colors.RESET + " │ Priority: " + Colors.YELLOW + process.getPriority() +
                 Colors.RESET);
         System.out.println("Total context switches: " + contextSwitches);
+
     }
+
 }
