@@ -327,11 +327,12 @@ public class SchedulerSimulation {
         System.out.println(Colors.BOLD + Colors.BRIGHT_GREEN +
                 "╚════════════════════════════════════════════════════════════════════════════════╝" +
                 Colors.RESET + "\n");
+                        System.out.println("Total context switches: " + contextSwitches);
+
         // Feature 3: Waiting time and turnaround time summary
         System.out.println("\n=== Process Summary ===");
         System.out.printf("%-10s %-12s %-15s %-15s%n",
                 "Process", "Burst Time", "Waiting Time", "Turnaround Time");
-
         for (Process process : processMap.values()) {
             System.out.printf("%-10s %-12d %-15d %-15d%n",
                     process.getName(),
@@ -352,13 +353,11 @@ public class SchedulerSimulation {
 
         // Add the thread to the ready queue
         processQueue.add(thread);
-        // Feature 3: Record the moment the process enters the ready queue.
-        process.markReady();
 
         // Map the thread to the process, so we can track the process associated with
         // each thread
         processMap.put(thread, process);
-
+        System.out.println("Total context switches: " + contextSwitches);
         // Print a message indicating the process has entered the ready queue
         // Feature 1: Display process priority in the ready queue
         System.out.println(Colors.BLUE + "  ➕ " + Colors.BOLD + Colors.CYAN + process.getName() +
@@ -366,7 +365,6 @@ public class SchedulerSimulation {
                 " │ Burst time: " + Colors.YELLOW + process.getBurstTime() + "ms" +
                 Colors.RESET + " │ Priority: " + Colors.YELLOW + process.getPriority() +
                 Colors.RESET);
-        System.out.println("Total context switches: " + contextSwitches);
 
     }
 
