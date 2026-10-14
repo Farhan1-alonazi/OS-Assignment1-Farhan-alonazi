@@ -33,13 +33,13 @@
 | **Student ID** | [446050414] |
 | **University Email** | [446050414]@std.psau.edu.sa |
 | **GitHub Username** | [your-github-username] |
-| **Repository Link** | [Paste your repository link here] |
+| **Repository Link** | https://github.com/Farhan1-alonazi/OS-Assignment1-Farhan-alonazi.git |
  
 ---
 
 ## 🎥 Video Link
 
-**Video Link**: [Paste your video link here]
+**Video Link**: [(https://youtu.be/XZ2Th_x8Alg?si=HnkMHH3TJ2DaKBgV)]
 
 > ⚠️ **WARNING:** The video must be **publicly accessible** ("Anyone with the link can view") on **Google Drive**, **YouTube (Unlisted or Public)** or any other cloud file-sharing system. A private, restricted or broken link counts as a **missing video (-1 mark)**.
 >
